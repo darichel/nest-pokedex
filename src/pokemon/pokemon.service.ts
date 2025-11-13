@@ -20,20 +20,12 @@ export class PokemonService {
   ) {}
 
   async create(createPokemonDto: CreatePokemonDto) {
-    createPokemonDto.name = createPokemonDto.name.toLocaleLowerCase();
+    createPokemonDto.name = createPokemonDto.name.toLowerCase();
     try {
       const pokemon = await this.pokemonModel.create(createPokemonDto);
       return pokemon;
     } catch (error) {
-      if (error.code === 11000) {
-        throw new BadRequestException(
-          `Pokemon exists in db ${JSON.stringify(error.keyValue)}`,
-        );
-      }
-      console.log(error);
-      throw new InternalServerErrorException(
-        `Can't create Pokemon - Check server logs`,
-      );
+      this.handleExceptions(error);
     }
   }
 
@@ -54,7 +46,7 @@ export class PokemonService {
 
     if (!pokemon)
       pokemon = await this.pokemonModel.findOne({
-        name: term.toLocaleLowerCase(),
+        name: term.toLowerCase(),
       });
 
     if (!pokemon)
@@ -66,15 +58,31 @@ export class PokemonService {
   }
 
   async update(term: string, updatePokemonDto: UpdatePokemonDto) {
-    const pokemon = await this.findOne(term);
-    if (updatePokemonDto.name)
-      updatePokemonDto.name = updatePokemonDto.name.toLocaleLowerCase();
-    await pokemon.updateOne(updatePokemonDto, { new: true });
+    try {
+      const pokemon = await this.findOne(term);
+      if (updatePokemonDto.name)
+        updatePokemonDto.name = updatePokemonDto.name.toLowerCase();
+      await pokemon.updateOne(updatePokemonDto, { new: true });
 
-    return { ...pokemon.toJSON(), ...updatePokemonDto };
+      return { ...pokemon.toJSON(), ...updatePokemonDto };
+    } catch (error) {
+      this.handleExceptions(error);
+    }
   }
 
   remove(id: number) {
     return `This action removes a #${id} pokemon`;
+  }
+
+  private handleExceptions(error: any) {
+    if (error.code === 11000) {
+      throw new BadRequestException(
+        `Pokemon exists in db ${JSON.stringify(error.keyValue)}`,
+      );
+    }
+    console.log(error);
+    throw new InternalServerErrorException(
+      `Can't create Pokemon - Check server logs`,
+    );
   }
 }
