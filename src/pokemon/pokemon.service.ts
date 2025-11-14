@@ -12,6 +12,7 @@ import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity';
 import { Model, Types } from 'mongoose';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
@@ -29,8 +30,9 @@ export class PokemonService {
     }
   }
 
-  async findAll() {
-    const pokemons = this.pokemonModel.find().exec();
+  async findAll(paginationDto: PaginationDto) {
+    const { limit = 10, offset = 0 } = paginationDto;
+    const pokemons = await this.pokemonModel.find().limit(limit).skip(offset);
     return pokemons;
   }
 
