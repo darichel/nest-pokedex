@@ -31,22 +31,30 @@ $ npm i -g @nestjs/cli
 ```
 
 ## Get up database
+
 ```bash
 $ docker-compose up -d
 ```
+
 ## Init app
-```
+
+```bash
 $ npm run start:dev
 ```
 
+Clone **.env.template** file and change it to __.env___ and fill all enviroment vars.
+
+```bash
+$ docker-compose up -d
+```
+
 ## Build database with SEED
+
 ```bash
 https://localhost:3000/api/v2/seed
 ```
 
 ## Stack
+
 *MongoDB
 *Nest
-
-
-
