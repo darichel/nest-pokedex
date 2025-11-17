@@ -34,6 +34,10 @@ $ npm i -g @nestjs/cli
 ```bash
 $ docker-compose up -d
 ```
+## Init app
+```
+$ npm run start:dev
+```
 
 ## Build database with SEED
 ```bash
